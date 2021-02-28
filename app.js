@@ -15,7 +15,7 @@ UI.prototype.addBookToList = function (book) {
     // create tr Element
     const row = document.createElement('tr');
 
-    row.innerHTML = 
+    row.innerHTML =
         `<td>${book.title}</td>
         <td>${book.author}</td>
         <td>${book.isbn}</td>
@@ -31,10 +31,10 @@ UI.prototype.clearFields = function () {
 }
 
 // Show Alert success and error
-UI.prototype.showAlert = function(message , className){
+UI.prototype.showAlert = function (message, className) {
     // Create  div Element for Alert
     const div = document.createElement('div');
-    
+
     // Add Class Name
     div.className = `alert ${className}`;
 
@@ -48,15 +48,23 @@ UI.prototype.showAlert = function(message , className){
     // Get form Element
     const form = document.querySelector('#book-form');
 
-    container.insertBefore(div,form);
+    container.insertBefore(div, form);
 
-    setTimeout(function(){
+    setTimeout(function () {
         document.querySelector('.alert').remove();
-    },3000)
+    }, 3000)
 
 }
 
-// Event Listeners
+// Delete Book prototype
+
+UI.prototype.deleteBook = function (target){
+    if(target.className === 'delete'){
+        target.parentElement.parentElement.remove();
+    }
+}
+
+// ** Event Listeners Add book **
 document.getElementById('book-form').addEventListener('submit', function (e) {
 
     // Get value from form
@@ -77,11 +85,25 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
         ui.addBookToList(book);
 
         // Show Alert Success
-        ui.showAlert('Book Added','success');
+        ui.showAlert('Book Added', 'success');
 
         // clear Fields
         ui.clearFields();
     }
 
     e.preventDefault();
-})
+});
+
+// Event Listener for delete book
+document.getElementById('book-list').addEventListener('click', function (e) {
+    
+    // Instantiate UI
+    const ui = new UI();
+    // Delete Book ui
+    ui.deleteBook(e.target);
+    
+    // Show Alert after delete book
+    ui.showAlert('Book Deleted!','success');
+
+    e.preventDefault();
+});
