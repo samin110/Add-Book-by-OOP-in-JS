@@ -65,6 +65,14 @@ UI.prototype.deleteBook = function (target) {
         target.parentElement.parentElement.remove();
     }
 }
+
+// Remove All Data From UI
+UI.prototype.clearAllDataUI = function(target){
+    if(target.id === 'clear'){
+        document.getElementById('book-list').innerHTML = '';
+        
+    }
+}
 // ====================================
 
 // Local Storage Constructor
@@ -109,6 +117,10 @@ Store.prototype.displayBooks = function () {
         ui.addBookToList(book);
 
     });
+}
+
+Store.prototype.clearAllData = function(){
+    localStorage.clear();
 }
 
 // ====================================
@@ -166,4 +178,19 @@ document.getElementById('book-list').addEventListener('click', function (e) {
     ui.showAlert('Book Deleted!', 'success');
 
     e.preventDefault();
+});
+
+// ** Event Clear All data in Ls and UI
+document.getElementById('clear').addEventListener('click',function(e){
+    // Remove All data from LS
+    const storage = new Store();
+    storage.clearAllData();
+
+    // Remove All Data from UI
+    const ui = new UI();
+    ui.clearAllDataUI(e.target);
+
+    e.preventDefault();
+
+    ui.showAlert('All data was deleted','success');
 });
