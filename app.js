@@ -4,11 +4,13 @@ function Book(title, author, isbn) {
     this.author = author;
     this.isbn = isbn;
 }
+// =====================================
 
 // UI Constructor
 function UI() {
 
 }
+
 // Add Book Function to UI
 UI.prototype.addBookToList = function (book) {
     const list = document.getElementById('book-list');
@@ -17,9 +19,9 @@ UI.prototype.addBookToList = function (book) {
 
     row.innerHTML =
         `<td>${book.title}</td>
-        <td>${book.author}</td>
-        <td>${book.isbn}</td>
-        <td><a hred="#" class="delete">X</a></td>`;
+    <td>${book.author}</td>
+    <td>${book.isbn}</td>
+    <td><a hred="#" class="delete">X</a></td>`;
     list.appendChild(row);
 }
 
@@ -58,11 +60,61 @@ UI.prototype.showAlert = function (message, className) {
 
 // Delete Book prototype
 
-UI.prototype.deleteBook = function (target){
-    if(target.className === 'delete'){
+UI.prototype.deleteBook = function (target) {
+    if (target.className === 'delete') {
         target.parentElement.parentElement.remove();
     }
 }
+// ====================================
+
+// Local Storage Constructor
+function Store() {
+}
+
+Store.prototype.getBooks = function () {
+    let books;
+    if (localStorage.getItem('books') === null) {
+        books = [];
+    } else {
+        books = JSON.parse(localStorage.getItem('books'));
+    }
+    return books;
+}
+
+Store.prototype.addBook = function (book) {
+    const storage = new Store(book);
+    const books = storage.getBooks();
+    books.push(book);
+    localStorage.setItem('books', JSON.stringify(books));
+}
+
+Store.prototype.removeBook = function (isbn) {
+    const books = storage.getBooks();
+
+    books.forEach(function (book, index) {
+        if (book.isbn === isbn) {
+            books.splice(index, 1);
+        }
+    });
+    localStorage.setItem('books', JSON.stringify(books));
+    
+}
+
+Store.prototype.displayBooks = function () {
+    const books = storage.getBooks();
+
+    books.forEach(function (book) {
+        const ui = new UI;
+
+        ui.addBookToList(book);
+
+    });
+}
+
+// ====================================
+
+const storage = new Store();
+document.addEventListener('DOMContentLoaded',storage.displayBooks);
 
 // ** Event Listeners Add book **
 document.getElementById('book-form').addEventListener('submit', function (e) {
@@ -84,6 +136,10 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
         // Add Book To List
         ui.addBookToList(book);
 
+        // Add to LS
+        const storage = new Store(book);
+        storage.addBook(book);
+
         // Show Alert Success
         ui.showAlert('Book Added', 'success');
 
@@ -96,14 +152,18 @@ document.getElementById('book-form').addEventListener('submit', function (e) {
 
 // Event Listener for delete book
 document.getElementById('book-list').addEventListener('click', function (e) {
-    
+
     // Instantiate UI
     const ui = new UI();
     // Delete Book ui
     ui.deleteBook(e.target);
-    
+
+    // Remove Book from local storage
+    const storage = new Store();
+    storage.removeBook(e.target.parentElement.previousElementSibling.textContent);
+
     // Show Alert after delete book
-    ui.showAlert('Book Deleted!','success');
+    ui.showAlert('Book Deleted!', 'success');
 
     e.preventDefault();
 });
